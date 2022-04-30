@@ -9,6 +9,7 @@ import skvideo.measure
 
 
 def SI_IMG(img):
+    # get the gradient information of images
     sobelx = cv2.Sobel(img, cv2.CV_64F, dx=1, dy=0)
     sobelx = cv2.convertScaleAbs(sobelx).astype('float32')
 
@@ -23,6 +24,7 @@ def SI_IMG(img):
 
 
 def colorfulness_img(img):
+    # 
     B, G, R = cv2.split(img)
     rg = R - G
     yb = (R + G) / 2 - B
@@ -52,13 +54,14 @@ def get_img_info(img_path):
     # img = img[img_height//4: img_height//4*3, img_width//4: img_width//4*3]
     # img_height, img_width = img.shape[:2]
 
+    # get gradient of the image
     img_dy = img[:img_height - 1] - img[1:]
     img_dx = img[:, :img_width - 1] - img[:, 1:]
     img_gradient = np.mean(np.abs(img_dx)) + np.mean(np.abs(img_dy))
 
-    img_si = SI_IMG(img)
+    img_si = SI_IMG(img) #sobel operator
     img_colorful = colorfulness_img(img)
-
+    '''
     if img_height > 192 and img_width > 192:
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         try:
@@ -67,12 +70,14 @@ def get_img_info(img_path):
             img_niqe = -1
     else:
         img_niqe = -1
+    '''
 
-    return file_size, img_height, img_width, img_height * img_width, img_gradient, img_si, img_niqe, img_colorful
+    #return file_size, img_height, img_width, img_height * img_width, img_gradient, img_si, img_niqe, img_colorful
+    return file_size, img_height, img_width, img_height * img_width, img_gradient, img_si, img_colorful
 
 
 if __name__ == '__main__':
-    root_dir = "../Image-Downloader-master/download_images/gan/emoji_combine"  # emoji_all"
+    root_dir = "../../emoji_combine"
     file_suffix = "jpeg|jpg|png"
     output_excel = "img_combine_info.xls"
 
@@ -80,8 +85,7 @@ if __name__ == '__main__':
     img_name_list = []
     file_list = os.listdir(root_dir)
     for img_name in file_list:
-        # 对处理文件的类型进行过滤
-        if re.search(file_suffix, img_name) is None:
+        if re.search(file_suffix, img_name) is None: # filter the type of file
             continue
         print(img_name)
         img_path = root_dir + "/" + img_name
@@ -92,12 +96,13 @@ if __name__ == '__main__':
         img_info_list.append(img_info)
         img_name_list.append(img_name)
     img_info_np = np.array(img_info_list)
+    # build a table
     img_info_df = pd.DataFrame(img_info_np, index=img_name_list,
-                               columns=["size", "height", "width", "area", "gradient", "si", "niqe", "colorful"])
-    # 去重
+                               columns=["size", "height", "width", "area", "gradient", "si", "colorful"])
+    # delete duplicates
     img_info_df = img_info_df.drop_duplicates()
 
-    # 输出统计特征
+    # output the table
     writer = pd.ExcelWriter(output_excel)
     img_info_df.to_excel(writer, index=True, float_format="%.f")
     writer.save()

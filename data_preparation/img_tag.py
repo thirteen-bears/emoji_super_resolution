@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 import utils
 
+os.environ['QT_MAC_WANTS_LAYER'] = '1'
+
 
 def show_next_img(i):
     name = data.index[i]
@@ -17,25 +19,25 @@ def show_next_img(i):
     pygame.display.flip()
 
 
-root_dir = "../Image-Downloader-master/download_images/gan/emoji_combine"
+root_dir = "../../emoji_combine"
 excel_path = "img_combine_info.xls"
 data = pd.read_excel(excel_path, index_col=0)
 data = data.sample(50)
-data["type"] = ""
-show_size = (256, 256)
+data["type"] = "" # add a new column "tag""
+show_size = (256, 256) # pygame screen resolution
 
 pygame.init()
 screen = pygame.display.set_mode(show_size)
 
 i = 0
 show_next_img(i)
-end_tag = False
-type_dict = {pygame.K_LEFT: "lr", pygame.K_RIGHT: "hr", pygame.K_UP: "other"}
+end_tag = False # whether to end the project
+type_dict = {pygame.K_LEFT: "lr", pygame.K_RIGHT: "hr", pygame.K_UP: "other"} # key and corresponding tag
 while not end_tag:
-    for event in pygame.event.get():
-        print(event.type)
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+    for event in pygame.event.get(): # get event from q 监听键盘的事件
+        #print(event.type)
+        if event.type == pygame.KEYDOWN: # keydown 按下键盘某个按键
+            if event.key == pygame.K_SPACE:  # key space means quit
                 pygame.quit()
                 end_tag = True
                 break
@@ -49,14 +51,15 @@ while not end_tag:
                 show_next_img(i)
 
 writer = pd.ExcelWriter("img_combine_info_type.xls")
-data.to_excel(writer, index=True, float_format="%.f")
+data.to_excel(writer, index=True, float_format="%.f") # write "data" into excel
 writer.save()
 
+# visualize the features
 columns = ["size", "area", "gradient", "si", "niqe", "colorful"]
-color = {"lr": "red", "hr": "blue", "other": "yellow"}
+color = {"lr": "red", "hr":  "blue", "other": "yellow"}
 for column in columns:
-    for type_now in color.keys():
-        data_type = data[data["type"] == type_now].drop("type", axis=1)
+    for type_now in color.keys(): 
+        data_type = data[data["type"] == type_now].drop("type", axis=1) #get one and drop one
         print(type_now, data_type)
         if len(data_type) == 0:
             continue

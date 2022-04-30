@@ -3,7 +3,7 @@ import cv2
 
 import utils
 
-root_dir = "../Image-Downloader-master/download_images/gan/validation"
+root_dir = "./data/validation"
 input_dir = os.path.join(root_dir, "hr")
 output_dir = os.path.join(root_dir, "lr")
 new_size = (64, 64)

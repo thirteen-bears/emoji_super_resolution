@@ -3,7 +3,7 @@ import cv2
 import shutil
 import numpy as np
 import pandas as pd
-from sklearn.externals import joblib
+import joblib
 from sklearn.tree import DecisionTreeClassifier
 
 import utils
@@ -18,10 +18,10 @@ def move_data(data, root_dir, output_dir):
         shutil.copy(file_path, output_path)
 
 
-root_dir = "../Image-Downloader-master/download_images/gan/emoji_combine"
-hr_dir = "../Image-Downloader-master/download_images/gan/hr"
-lr_dir = "../Image-Downloader-master/download_images/gan/lr"
-other_dir = "../Image-Downloader-master/download_images/gan/other"
+root_dir = "../../data/emoji_combine"
+hr_dir = "../../data/hr"
+lr_dir = "../../data/lr"
+other_dir = "../../data/other"
 
 utils.check_dir(hr_dir)
 utils.check_dir(lr_dir)
